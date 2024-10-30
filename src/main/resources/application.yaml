@@ -1,0 +1,20 @@
+spring:
+
+  docker:
+    compose:
+      file: src/main/docker/compose.yaml
+      enabled: true
+      lifecycle-management: start_only
+
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+
+
+  liquibase:
+    change-log: db/changelog/master.yaml
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+
