@@ -1,6 +1,5 @@
 package com.example.liquibase.domain;
 
-import com.epshiro.samurai.domain.enums.SpeciesType;
 import com.example.liquibase.domain.enums.SpeciesType;
 import jakarta.persistence.*;
 import lombok.*;
