@@ -1,19 +1,23 @@
 package com.example.liquibase.service.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO implements Serializable {
+public class UserDTO {
+    private UUID id;
     private String username;
+    private String firstName;
+    private String lastName;
     private String email;
+    @Override
+    public String toString() {
+        return String.format("UserDTO{id=%s, username='%s', firstName='%s', lastName='%s', email='%s'}",
+                id, username, firstName, lastName, email);
+    }
 }

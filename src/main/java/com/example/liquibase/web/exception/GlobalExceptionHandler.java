@@ -13,22 +13,6 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-  /*  @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, List<String>> handleException(MethodArgumentNotValidException exception) {
-        Map<String, List<String>> errors = new HashMap<>();
-        exception.getBindingResult().getFieldErrors().forEach(error -> {
-            if (!errors.containsKey(error.getField())) {
-                List<String> errorList = new ArrayList<>();
-                errorList.add(error.getDefaultMessage());
-                errors.put(error.getField(), errorList);
-            } else {
-                errors.get(error.getField()).add(error.getDefaultMessage());
-            }
-        });
-        return errors;
-    }*/
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult().getFieldErrors()

@@ -6,7 +6,5 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface RegisterVmMapper {
-//    User ToUser(RegisterVM signUpVm);
-    User toUser(RegisterVM signUpVm);  // Changed from ToUser to toUser
-
+    User toUser(RegisterVM signUpVm);
 }

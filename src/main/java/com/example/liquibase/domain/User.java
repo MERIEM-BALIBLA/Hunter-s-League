@@ -41,7 +41,7 @@ public class User {
 
     private LocalDateTime licenseExpirationDate;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Participation> participations;
 
 }
