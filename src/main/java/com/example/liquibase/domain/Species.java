@@ -2,11 +2,14 @@ package com.example.liquibase.domain;
 
 import com.example.liquibase.domain.enums.Difficulty;
 import com.example.liquibase.domain.enums.SpeciesType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+//import jakarta.persistence.Id;
+import jakarta.validation.constraints.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.*;
+
 import java.util.UUID;
 
 @Entity
@@ -27,20 +30,17 @@ public class Species {
     private String name;
 
     @NotNull
-    @NotBlank
     @Enumerated(EnumType.STRING)
     private SpeciesType category;
 
     @NotNull
-    @NotBlank
-    @Size(min = 10 , message = ("the weight must be or gratest than 10"))
+    @Min(value = 20, message = "the minimum weight must be 20 or greater")
     private Double minimumWeight;
 
     @NotNull
-    @NotBlank
     @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
+    @Min(value = 0, message = "points must be 0 or greater")
     private Integer points;
-
 }

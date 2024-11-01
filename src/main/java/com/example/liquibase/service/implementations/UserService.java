@@ -28,7 +28,6 @@ public class UserService implements UserInterface {
         return userRepository.findAll(pageable);
     }
 
-
     @Override
     public User createUser(User user) {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));  // Remove asterisks

@@ -5,8 +5,12 @@ import com.example.liquibase.domain.User;
 import com.example.liquibase.repository.SpeciesRepository;
 import com.example.liquibase.web.exception.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,10 +20,15 @@ public class SpeciesService {
     @Autowired
     private SpeciesRepository speciesRepository;
 
+    public Page<Species> getAll(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return speciesRepository.findAll(pageable);
+    }
+
     public Species createSpecie(Species species) {
         Optional<Species> userOptional = this.speciesRepository.getByName(species.getName());
         if (userOptional.isPresent()) {
-            throw new UserException("User already exists");
+            throw new UserException("Species already exists");
         }
         return speciesRepository.save(species);
     }
@@ -49,5 +58,11 @@ public class SpeciesService {
         }
     }
 
+/*
+    public Page<User> getAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
+    }
+*/
 
 }
