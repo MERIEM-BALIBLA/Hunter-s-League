@@ -1,5 +1,7 @@
 package com.example.liquibase.web.exception;
 
+import com.example.liquibase.web.exception.Competition.CompetitionException;
+import com.example.liquibase.web.exception.species.SpeciesException;
 import com.example.liquibase.web.exception.user.UserException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<String> handleInvalidUserException(UserException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CompetitionException.class)
+    public ResponseEntity<String> handleInvalidUserException(CompetitionException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(SpeciesException.class)
+    public ResponseEntity<String> handleInvalidUserException(SpeciesException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

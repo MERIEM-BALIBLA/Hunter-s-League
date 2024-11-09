@@ -84,5 +84,10 @@ public class UserController {
 
         return ResponseEntity.ok(userDTOs);
     }
+    @GetMapping("/expired")
+    public List<UserDTO> getExpiredUsers() {
+        return userService.getExpiredUsers();
+    }
+
 
 }

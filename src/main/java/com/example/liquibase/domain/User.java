@@ -44,5 +44,12 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Participation> participations;
 
+    @PrePersist
+    protected void onCreate() {
+        joinDate = LocalDateTime.now();
+        if (licenseExpirationDate == null) {
+            licenseExpirationDate = joinDate.plusMinutes(3);
+        }
+    }
 }
 

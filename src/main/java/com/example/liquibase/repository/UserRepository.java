@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,5 +21,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT DISTINCT u FROM User u WHERE LOWER(u.email) = LOWER(:email)")
     List<User> findByEmail(@Param("email") String email);
 
+    List<User> findByLicenseExpirationDateAfter(LocalDateTime now);
 
 }

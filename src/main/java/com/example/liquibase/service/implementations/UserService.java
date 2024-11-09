@@ -2,6 +2,7 @@ package com.example.liquibase.service.implementations;
 
 import com.example.liquibase.domain.User;
 import com.example.liquibase.repository.UserRepository;
+import com.example.liquibase.service.DTO.UserDTO;
 import com.example.liquibase.service.interfaces.UserInterface;
 import com.example.liquibase.web.exception.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.data.domain.*;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserInterface {
@@ -19,6 +22,17 @@ public class UserService implements UserInterface {
     @Autowired
     private UserRepository userRepository;
 
+    public List<UserDTO> getExpiredUsers() {
+        LocalDateTime now = LocalDateTime.now();
+        List<User> expiredUsers = userRepository.findByLicenseExpirationDateAfter(now);
+        return expiredUsers.stream()
+                .map(user -> new UserDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail()))
+                .collect(Collectors.toList());    }
     public Optional<User> getUserByName(String username) {
         return this.userRepository.getUserByUsername(username);
     }
