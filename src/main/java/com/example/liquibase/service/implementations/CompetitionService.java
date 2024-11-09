@@ -57,12 +57,26 @@ public class CompetitionService implements CompetitionInterface {
      }
  */
     @Override
+    public Optional<Competition> getByCode(String code) {
+        return competitionRepository.findByCode(code);
+    }
+
+    @Override
     public Competition save(Competition competition) {
-        if (competition.getLocation() != null && competition.getDate() != null) {
+        // First, generate the competition code if it's not already set
+        if (competition.getLocation() != null && competition.getDate() != null && competition.getCode() == null) {
             String code = generateCodeFromLocationAndDate(competition.getLocation(), competition.getDate());
             competition.setCode(code);
         }
-        return competitionRepository.save(competition);
+
+        // Now check if a competition with the generated code already exists
+        Optional<Competition> competitionOptional = getByCode(competition.getCode());
+        if (competitionOptional.isPresent()) {
+            throw new CompetitionException("This competition with this code already exists");
+        }
+
+        // Save the new competition
+        return competitionRepository.save(validation(competition));
     }
 
     private String generateCodeFromLocationAndDate(String location, LocalDateTime date) {
@@ -106,8 +120,16 @@ public class CompetitionService implements CompetitionInterface {
         competitionRepository.delete(competition.get());
     }
 
+    @Override
     public Page<Competition> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return competitionRepository.findAll(pageable);
+    }
+
+    public Competition validation(Competition competition) {
+        if (competition.getDate().isBefore(LocalDateTime.now().plusDays(3))) {
+            throw new CompetitionException("Competition date must be at least 3 days from now");
+        }
+        return competition;
     }
 }

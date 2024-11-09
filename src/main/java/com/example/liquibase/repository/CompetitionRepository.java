@@ -7,5 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CompetitionRepository extends JpaRepository<Competition, Integer> {
-    public Optional<Competition> getById(UUID id);
+    Optional<Competition> getById(UUID id);
+
+    Optional<Competition> findByCode(String code);
 }

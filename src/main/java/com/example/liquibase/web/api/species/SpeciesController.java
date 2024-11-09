@@ -1,8 +1,6 @@
 package com.example.liquibase.web.api.species;
 
 import com.example.liquibase.domain.Species;
-import com.example.liquibase.domain.User;
-import com.example.liquibase.service.DTO.UserDTO;
 import com.example.liquibase.service.implementations.SpeciesService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,9 +22,8 @@ public class SpeciesController {
         return ResponseEntity.ok(species);
     }*/
     public ResponseEntity<Page<Species>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<Species> userPage = speciesService.getAll(page, size);
-//        Page<UserDTO> userDTOPage = userPage.map(userMapper::toUserDTO);
-        return ResponseEntity.ok(userPage);
+        Page<Species> speciesPage = speciesService.getAll(page, size);
+        return ResponseEntity.ok(speciesPage);
     }
 
     @PostMapping("/addSpecies")
