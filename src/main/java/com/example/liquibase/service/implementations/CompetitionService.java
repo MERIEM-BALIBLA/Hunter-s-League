@@ -63,13 +63,11 @@ public class CompetitionService implements CompetitionInterface {
 
     @Override
     public Competition save(Competition competition) {
-        // First, generate the competition code if it's not already set
         if (competition.getLocation() != null && competition.getDate() != null && competition.getCode() == null) {
             String code = generateCodeFromLocationAndDate(competition.getLocation(), competition.getDate());
             competition.setCode(code);
         }
 
-        // Now check if a competition with the generated code already exists
         Optional<Competition> competitionOptional = getByCode(competition.getCode());
         if (competitionOptional.isPresent()) {
             throw new CompetitionException("This competition with this code already exists");
@@ -131,5 +129,9 @@ public class CompetitionService implements CompetitionInterface {
             throw new CompetitionException("Competition date must be at least 3 days from now");
         }
         return competition;
+    }
+
+    public Optional<Competition> findByLocation(String location) {
+        return competitionRepository.findByLocation(location);
     }
 }

@@ -10,4 +10,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
     Optional<Competition> getById(UUID id);
 
     Optional<Competition> findByCode(String code);
+
+    Optional<Competition> findByLocation(String location);
 }

@@ -39,7 +39,7 @@ public class UserService implements UserInterface {
 
     public Page<User> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable);
+        return userRepository.findAllByOrderByJoinDateDesc(pageable);
     }
 
     @Override

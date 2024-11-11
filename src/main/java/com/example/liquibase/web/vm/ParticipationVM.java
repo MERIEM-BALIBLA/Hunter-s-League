@@ -1,19 +1,15 @@
-package com.example.liquibase.service.DTO;
+package com.example.liquibase.web.vm;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipationDTO {
-    private UUID id;
+public class ParticipationVM {
     private String userName;
-    private String competitionLocation;
-    private Double score;
+    private String competitionCode;
 }
