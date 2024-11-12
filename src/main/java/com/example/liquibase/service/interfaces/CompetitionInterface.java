@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface CompetitionInterface {
     Competition save(Competition competition);
 
-    Competition update(UUID id, Competition competition);
+    Competition update(Competition competition);
 
     void delete(UUID id);
 

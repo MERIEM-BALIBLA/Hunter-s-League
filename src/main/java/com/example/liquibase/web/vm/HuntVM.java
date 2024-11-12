@@ -21,18 +21,9 @@ public class HuntVM {
     private String speciesName;
 
     @NotNull(message = "Participation id shouldn't be null")
-    @NotBlank(message = "Participation id shouldn't be empty")
+//    @NotBlank(message = "Participation id shouldn't be empty")
     private UUID participationId;
 
     @NotNull(message = "Weight shouldn't be null")
-    @NotBlank(message = "Weight shouldn't be empty")
     private Double weight;
-
-    public static HuntVM createForDataEntry(String speciesName, UUID participationId, Double weight) {
-        return HuntVM.builder()
-                .speciesName(speciesName)
-                .participationId(participationId)
-                .weight(weight)
-                .build();
-    }
 }

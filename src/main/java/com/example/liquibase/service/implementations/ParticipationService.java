@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -61,6 +62,14 @@ public class ParticipationService implements ParticipationInterface {
                 throw new ParticipationException("The maximum number of participants has been reached for this competition");
             }
 
+            if (!competition.get().getOpenRegistration()) {
+                throw new ParticipationException("The date of the participation is limited");
+            }
+
+            if (user.get().getLicenseExpirationDate().isBefore(LocalDateTime.now())) {
+                throw new ParticipationException("User's licence is expired");
+            }
+
             // Map the ParticipationVM to Participation
             Participation participation = participationMapper.toParticipation(participationVM);
             // Set the user and competition associations
@@ -70,7 +79,7 @@ public class ParticipationService implements ParticipationInterface {
 
             return participationRepository.save(participation);
         } else {
-            throw new ParticipationException("Please make sure that the user name or competition code is correct");
+            throw new ParticipationException("There is already a participation with this profile");
         }
     }
 

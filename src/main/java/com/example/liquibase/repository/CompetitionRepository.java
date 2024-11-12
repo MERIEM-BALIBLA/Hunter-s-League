@@ -4,6 +4,9 @@ import com.example.liquibase.domain.Competition;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +17,5 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
 
     Optional<Competition> findByLocation(String location);
 
-//    @Query("SELECT COUNT(DISTINCT p.user) FROM Participation p WHERE p.competition.id = :competitionId")
-//    int countUsersByCompetitionId(UUID competitionId);
+    List<Competition> findByDateBetween(LocalDateTime sevenDaysAgo, LocalDateTime currentDate);
 }

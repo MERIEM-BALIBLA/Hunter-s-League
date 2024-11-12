@@ -55,7 +55,7 @@ public class ParticipationController {
         return ResponseEntity.ok(participationService.findByUserId(id));
     }
 
-    @GetMapping("/podium")  // Remove the space after "podium"
+    @GetMapping("/podium")
     public ResponseEntity<List<ParticipationDTO>> topThree() {
         return ResponseEntity.ok(participationInterface.getTop3Participants());
     }

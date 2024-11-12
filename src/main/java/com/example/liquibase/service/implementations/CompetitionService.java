@@ -11,9 +11,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,7 +26,7 @@ public class CompetitionService implements CompetitionInterface {
     @Autowired
     private CompetitionRepository competitionRepository;
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    /*@Scheduled(cron = "0 0 0 * * ?")
     public void checkAndCloseRegistration() {
         // Récupérer toutes les compétitions
         competitionRepository.findAll().forEach(competition -> {
@@ -36,26 +38,23 @@ public class CompetitionService implements CompetitionInterface {
                 competitionRepository.save(competition);
             }
         });
+    }*/
+    public List<Competition> getAll() {
+        return competitionRepository.findAll();
     }
 
-    /* @Scheduled(cron = "0 0 0 * * ?") // Toutes les 5 minutes
-     public void checkAndCloseRegistration() {
-         List<Competition> competitions = competitionRepository.findAll();
-
-         for (Competition competition : competitions) {
-             LocalDateTime competitionDate = competition.getDate(); // Date de la compétition
-             LocalDateTime now = LocalDateTime.now(); // Date et heure actuelles
-
-             long minutesUntilCompetition = ChronoUnit.MINUTES.between(now, competitionDate);
-
-             if (minutesUntilCompetition <= 3 && minutesUntilCompetition > 0) {
-                 // Fermer l'inscription
-                 competition.setOpenRegistration(false);
-                 competitionRepository.save(competition);
-             }
-         }
-     }
- */
+   /* @Scheduled
+    public void setCloseRegistration() {
+        getAll().forEach(competition -> {
+            LocalDateTime competitionDate = competition.getDate();
+            long daysUntilCompetition = ChronoUnit.DAYS.between(LocalDateTime.now(), competitionDate);
+            if(daysUntilCompetition <= 1 && competition.getOpenRegistration()){
+                competition.setOpenRegistration(false);
+                update(competition);
+            }
+        });
+    }
+*/
     @Override
     public Optional<Competition> getByCode(String code) {
         return competitionRepository.findByCode(code);
@@ -63,6 +62,29 @@ public class CompetitionService implements CompetitionInterface {
 
     @Override
     public Competition save(Competition competition) {
+        if (competition.getLocation() != null && competition.getDate() != null && competition.getCode() == null) {
+            String code = generateCodeFromLocationAndDate(competition.getLocation(), competition.getDate());
+            competition.setCode(code);
+            competition.setOpenRegistration(true);
+        }
+
+        Optional<Competition> competitionOptional = getByCode(competition.getCode());
+        if (competitionOptional.isPresent()) {
+            throw new CompetitionException("This competition with this code already exists");
+        }
+
+        LocalDateTime currentDate = competition.getDate();
+        LocalDateTime sevenDaysAgo = currentDate.minusDays(7);
+
+        List<Competition> existingCompetitions = competitionRepository.findByDateBetween(sevenDaysAgo, currentDate);
+        if (!existingCompetitions.isEmpty()) {
+            throw new CompetitionException("Another competition already exists in the previous 7 days");
+        }
+
+        // Save the new competition
+        return competitionRepository.save(competition);
+    }
+    /*public Competition save(Competition competition) {
         if (competition.getLocation() != null && competition.getDate() != null && competition.getCode() == null) {
             String code = generateCodeFromLocationAndDate(competition.getLocation(), competition.getDate());
             competition.setCode(code);
@@ -75,7 +97,7 @@ public class CompetitionService implements CompetitionInterface {
 
         // Save the new competition
         return competitionRepository.save(validation(competition));
-    }
+    }*/
 
     private String generateCodeFromLocationAndDate(String location, LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -89,8 +111,8 @@ public class CompetitionService implements CompetitionInterface {
     }
 
     @Override
-    public Competition update(UUID id, Competition competition) {
-        Optional<Competition> competitionOptional = getByUd(id);
+    public Competition update(Competition competition) {
+        Optional<Competition> competitionOptional = getByUd(competition.getId());
         if (competitionOptional.isPresent()) {
             Competition existingCompetition = competitionOptional.get();
 
@@ -135,7 +157,4 @@ public class CompetitionService implements CompetitionInterface {
         return competitionRepository.findByLocation(location);
     }
 
-    /*public int countUsersByCompetitionId(UUID id){
-        return competitionRepository.countUsersByCompetitionId(id);
-    }*/
 }

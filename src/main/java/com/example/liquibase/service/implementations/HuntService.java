@@ -42,32 +42,25 @@ public class HuntService implements HuntInterface {
     }
 
     @Override
-    /*public Hunt save(HuntVM huntVM) {
-        Optional<Participation> participation = participationService.findById(huntVM.getParticipationId());
-        Optional<Species> species = speciesService.findByName(huntVM.getSpeciesName());
-        Hunt hunt = huntMapper.toHunt(huntVM);
-
-        hunt.setSpecies(species.get());
-        hunt.setParticipation(participation.get());
-        hunt.setWeight(hunt.getWeight());
-        return huntRepository.save(hunt);
-    }*/
     public Hunt save(HuntVM huntVM) {
         Optional<Participation> participationOpt = participationService.findById(huntVM.getParticipationId());
         Optional<Species> speciesOpt = speciesService.findByName(huntVM.getSpeciesName());
 
-
+        // verify if the data empty
         if (participationOpt.isEmpty() && speciesOpt.isEmpty()) {
             throw new RuntimeException("Participation or Species not found");
         }
+
         Participation participation = participationOpt.get();
         Species species = speciesOpt.get();
 
+        // verify if there is a Hunt with the same infromations
         Optional<Hunt> existingHunt = huntRepository.findByParticipationAndSpecies(participation, species);
         if (existingHunt.isPresent()) {
             throw new HuntException("A hunt for this species already exists for this participation");
         }
 
+        // Transforem from huntVM to hunt
         Hunt hunt = huntMapper.toHunt(huntVM);
 
         // Set the hunt infromationq
@@ -75,11 +68,17 @@ public class HuntService implements HuntInterface {
         hunt.setParticipation(participation);
         hunt.setWeight(hunt.getWeight());
 
+        // Calculate the score
         double huntScore = calculateHuntScore(species.getPoints(), hunt.getWeight(), species.getCategory(), species.getDifficulty());
 
         // Update participation's score
         double currentScore = participation.getScore();
         participation.setScore(currentScore + huntScore);
+
+        // Verify if the weight is minimum than the weight of the species
+        if (hunt.getWeight() <= species.getMinimumWeight()) {
+            throw new HuntException("The weight must be grater than the minimum weight of the species");
+        }
 
         // Save the updated participation
         participationService.update(participation);
@@ -87,7 +86,6 @@ public class HuntService implements HuntInterface {
     }
 
     private double calculateHuntScore(Integer speciesPoints, double weight, SpeciesType speciesType, Difficulty difficulty) {
-
         double baseCore = (weight * speciesType.getValue()) * getDifficultyMultiplier(difficulty);
         return speciesPoints + baseCore;
     }
