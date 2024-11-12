@@ -2,6 +2,7 @@ package com.example.liquibase.service.interfaces;
 
 import com.example.liquibase.domain.Hunt;
 import com.example.liquibase.service.DTO.HuntDTO;
+import com.example.liquibase.web.vm.HuntVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +14,9 @@ public interface HuntInterface {
     Page<HuntDTO> findAll(Pageable pageable);
 
 
-    Hunt save(Hunt hunt);
+//    Hunt save(Hunt hunt);
+
+    Hunt save(HuntVM huntVM);
 
     Optional<Hunt> findById(UUID id);
 

@@ -16,8 +16,8 @@ public interface HuntMapper {
 //    List<HuntDTO> toHuntDTOs(List<Hunt> hunts);
 
 
-   /* @Mapping(source = "speciesName", target = "species.name")
+    @Mapping(source = "speciesName", target = "species.name")
     @Mapping(source = "participationId", target = "participation.id")
-    @Mapping(source = "weight", target = "hunt.weight")*/
-    Participation toHunt(HuntVM hunt);
+    @Mapping(source = "weight", target = "weight")
+    Hunt toHunt(HuntVM hunt);
 }

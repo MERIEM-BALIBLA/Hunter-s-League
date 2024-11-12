@@ -1,6 +1,8 @@
 package com.example.liquibase.repository;
 
 import com.example.liquibase.domain.Hunt;
+import com.example.liquibase.domain.Participation;
+import com.example.liquibase.domain.Species;
 import com.example.liquibase.domain.enums.SpeciesType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +19,5 @@ public interface HuntRepository extends JpaRepository<Hunt, Integer> {
 
     List<Hunt> findByWeight(Double weight);
 
-//    Page<Hunt> findAllOrderById(Pageable pageable);
+    Optional<Hunt> findByParticipationAndSpecies(Participation participation, Species species);
 }

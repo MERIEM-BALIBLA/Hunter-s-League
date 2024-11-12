@@ -5,7 +5,6 @@ import com.example.liquibase.service.DTO.ParticipationDTO;
 import com.example.liquibase.service.DTO.mapper.ParticipationMapper;
 import com.example.liquibase.service.interfaces.ParticipationInterface;
 import com.example.liquibase.web.vm.ParticipationVM;
-import com.example.liquibase.service.implementations.ParticipationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class ParticipationController {
 
     @Autowired
-    private ParticipationService participationService;
+    private ParticipationInterface participationService;
 
     @Autowired
     private ParticipationInterface participationInterface;
@@ -28,22 +27,6 @@ public class ParticipationController {
     private ParticipationMapper participationMapper;
 
     @GetMapping("/list")
-   /* public ResponseEntity<Page<ParticipationDTO>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "Desc") String direction) {
-
-        Pageable pageable = PageRequest.of(
-                page,
-                size,
-                Sort.Direction.valueOf(direction.toUpperCase()),
-                sortBy
-        );
-
-        Page<ParticipationDTO> participations = participationInterface.findAll(pageable);
-        return ResponseEntity.ok(participations);
-    }*/
     public ResponseEntity<Page<ParticipationDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Participation> userPage = participationService.findAll(page, size);
         Page<ParticipationDTO> userDTOPage = userPage.map(participationMapper::toParticipationDTO);
@@ -71,4 +54,10 @@ public class ParticipationController {
     public ResponseEntity<List<ParticipationDTO>> get(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(participationService.findByUserId(id));
     }
+
+    @GetMapping("/podium")  // Remove the space after "podium"
+    public ResponseEntity<List<ParticipationDTO>> topThree() {
+        return ResponseEntity.ok(participationInterface.getTop3Participants());
+    }
+
 }

@@ -6,12 +6,15 @@ import com.example.liquibase.web.vm.ParticipationVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface ParticipationInterface {
 
 //    Page<ParticipationDTO> findAll(Pageable pageable);
+
+    Page<Participation> findAll(int page, int size);
 
     Participation save(ParticipationVM participationVM);
 
@@ -20,4 +23,8 @@ public interface ParticipationInterface {
     Participation update(Participation participation);
 
     void delete(UUID id);
+
+    List<ParticipationDTO> findByUserId(UUID id);
+
+    List<ParticipationDTO> getTop3Participants();
 }

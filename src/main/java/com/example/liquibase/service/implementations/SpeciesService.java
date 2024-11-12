@@ -31,6 +31,10 @@ public class SpeciesService {
         return speciesRepository.save(species);
     }
 
+    public Optional<Species> findByName(String name) {
+        return speciesRepository.getByName(name);
+    }
+
     public Optional<Species> getSpeciesById(UUID id) {
         return speciesRepository.getSpeciesById(id);
     }
@@ -55,5 +59,7 @@ public class SpeciesService {
             throw new RuntimeException("Species not found");
         }
     }
+
+
 
 }

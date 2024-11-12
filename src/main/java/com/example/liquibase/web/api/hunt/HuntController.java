@@ -2,20 +2,16 @@ package com.example.liquibase.web.api.hunt;
 
 import com.example.liquibase.domain.Hunt;
 import com.example.liquibase.service.DTO.HuntDTO;
-import com.example.liquibase.service.DTO.ParticipationDTO;
 import com.example.liquibase.service.interfaces.HuntInterface;
+import com.example.liquibase.web.vm.HuntVM;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/hunt")
@@ -43,6 +39,11 @@ public class HuntController {
 
         Page<HuntDTO> participations = huntInterface.findAll(pageable);
         return ResponseEntity.ok(participations);
+    }
+
+    @PostMapping("/create")
+    public Hunt create(@RequestBody @Valid HuntVM hunt){
+        return huntInterface.save(hunt);
     }
 
 

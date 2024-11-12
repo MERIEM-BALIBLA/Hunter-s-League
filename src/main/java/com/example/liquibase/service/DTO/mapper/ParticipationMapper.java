@@ -15,7 +15,7 @@ public interface ParticipationMapper {
 
     ParticipationDTO toParticipationDTO(Participation participation);
 
-//    List<ParticipationDTO> toParticipationDTOs(List<Participation> participations);
+    List<ParticipationDTO> toParticipationDTOs(List<Participation> participations);
 
 //    ParticipationVM toParticipationVM(ParticipationDTO participationDTO);
 

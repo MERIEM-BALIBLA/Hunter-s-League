@@ -134,4 +134,8 @@ public class CompetitionService implements CompetitionInterface {
     public Optional<Competition> findByLocation(String location) {
         return competitionRepository.findByLocation(location);
     }
+
+    /*public int countUsersByCompetitionId(UUID id){
+        return competitionRepository.countUsersByCompetitionId(id);
+    }*/
 }
