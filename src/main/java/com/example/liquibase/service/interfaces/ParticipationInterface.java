@@ -2,6 +2,7 @@ package com.example.liquibase.service.interfaces;
 
 import com.example.liquibase.domain.Participation;
 import com.example.liquibase.service.DTO.ParticipationDTO;
+import com.example.liquibase.service.DTO.UserParticipationDTO;
 import com.example.liquibase.web.vm.ParticipationVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ public interface ParticipationInterface {
 
     void delete(UUID id);
 
-    List<ParticipationDTO> findByUserId(UUID id);
+    List<UserParticipationDTO> findByUserId(UUID id);
 
     List<ParticipationDTO> getTop3Participants();
 }

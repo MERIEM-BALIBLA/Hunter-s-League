@@ -2,6 +2,7 @@ package com.example.liquibase.web.api.participation;
 
 import com.example.liquibase.domain.Participation;
 import com.example.liquibase.service.DTO.ParticipationDTO;
+import com.example.liquibase.service.DTO.UserParticipationDTO;
 import com.example.liquibase.service.DTO.mapper.ParticipationMapper;
 import com.example.liquibase.service.interfaces.ParticipationInterface;
 import com.example.liquibase.web.vm.ParticipationVM;
@@ -51,7 +52,7 @@ public class ParticipationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<ParticipationDTO>> get(@PathVariable("id") UUID id) {
+    public ResponseEntity<List<UserParticipationDTO>> get(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(participationService.findByUserId(id));
     }
 

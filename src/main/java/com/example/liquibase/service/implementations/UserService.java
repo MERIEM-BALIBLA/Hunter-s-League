@@ -32,7 +32,9 @@ public class UserService implements UserInterface {
                         user.getFirstName(),
                         user.getLastName(),
                         user.getEmail()))
-                .collect(Collectors.toList());    }
+                .collect(Collectors.toList());
+    }
+
     public Optional<User> getUserByName(String username) {
         return this.userRepository.getUserByUsername(username);
     }
@@ -115,6 +117,18 @@ public class UserService implements UserInterface {
             throw new UserException("Email cannot be empty");
         }
         return userRepository.findByEmail(email.trim());
+    }
+
+    List<User> findByLastName(String lastName) {
+        return userRepository.findByLastName(lastName);
+    }
+
+    List<User> findByFirstName(String firstName) {
+        return userRepository.findByFirstName(firstName);
+    }
+
+    List<User> findByCin(String cin) {
+        return userRepository.findByCin(cin);
     }
 
 }

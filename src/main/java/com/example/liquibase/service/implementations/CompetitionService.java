@@ -1,6 +1,7 @@
 package com.example.liquibase.service.implementations;
 
 import com.example.liquibase.domain.Competition;
+import com.example.liquibase.domain.enums.SpeciesType;
 import com.example.liquibase.repository.CompetitionRepository;
 import com.example.liquibase.service.interfaces.CompetitionInterface;
 import com.example.liquibase.web.exception.Competition.CompetitionException;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -26,35 +26,23 @@ public class CompetitionService implements CompetitionInterface {
     @Autowired
     private CompetitionRepository competitionRepository;
 
-    /*@Scheduled(cron = "0 0 0 * * ?")
+    public List<Competition> getAll() {
+        return competitionRepository.findAll();
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
     public void checkAndCloseRegistration() {
-        // Récupérer toutes les compétitions
-        competitionRepository.findAll().forEach(competition -> {
+        getAll().forEach(competition -> {
             LocalDateTime competitionDate = competition.getDate();
             long daysUntilCompetition = ChronoUnit.DAYS.between(LocalDateTime.now(), competitionDate);
 
             if (daysUntilCompetition <= 3 && competition.getOpenRegistration()) {
                 competition.setOpenRegistration(false);
-                competitionRepository.save(competition);
-            }
-        });
-    }*/
-    public List<Competition> getAll() {
-        return competitionRepository.findAll();
-    }
-
-   /* @Scheduled
-    public void setCloseRegistration() {
-        getAll().forEach(competition -> {
-            LocalDateTime competitionDate = competition.getDate();
-            long daysUntilCompetition = ChronoUnit.DAYS.between(LocalDateTime.now(), competitionDate);
-            if(daysUntilCompetition <= 1 && competition.getOpenRegistration()){
-                competition.setOpenRegistration(false);
                 update(competition);
             }
         });
     }
-*/
+
     @Override
     public Optional<Competition> getByCode(String code) {
         return competitionRepository.findByCode(code);
@@ -79,6 +67,14 @@ public class CompetitionService implements CompetitionInterface {
         List<Competition> existingCompetitions = competitionRepository.findByDateBetween(sevenDaysAgo, currentDate);
         if (!existingCompetitions.isEmpty()) {
             throw new CompetitionException("Another competition already exists in the previous 7 days");
+        }
+
+        if (competition.getDate().isBefore(LocalDateTime.now())) {
+            throw new CompetitionException("The competition date must be in the future");
+        }
+
+        if (competition.getMinParticipants() > competition.getMaxParticipants()) {
+            throw new CompetitionException("The value of the minimum shouldn't be grater than the maximum");
         }
 
         // Save the new competition
@@ -157,4 +153,7 @@ public class CompetitionService implements CompetitionInterface {
         return competitionRepository.findByLocation(location);
     }
 
+//    public List<Competition> searchCompetitions(String code, String location, LocalDateTime dateFrom, SpeciesType speciesType, Boolean openRegistration) {
+//        return competitionRepository.findByCriteria();
+//    }
 }

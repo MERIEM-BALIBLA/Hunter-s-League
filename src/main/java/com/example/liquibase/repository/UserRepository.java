@@ -19,7 +19,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByUsernameContainingIgnoreCase(String username);
 
-    //    List<User> findByEmail(String email);
+    List<User> findByLastName(String lastName);
+
+    List<User> findByFirstName(String firstName);
+
+    List<User> findByCin(String cin);
+
     @Query("SELECT DISTINCT u FROM User u WHERE LOWER(u.email) = LOWER(:email)")
     List<User> findByEmail(@Param("email") String email);
 

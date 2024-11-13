@@ -5,7 +5,9 @@ import com.example.liquibase.domain.Participation;
 import com.example.liquibase.domain.User;
 import com.example.liquibase.repository.ParticipationRepository;
 import com.example.liquibase.service.DTO.ParticipationDTO;
+import com.example.liquibase.service.DTO.UserParticipationDTO;
 import com.example.liquibase.service.DTO.mapper.ParticipationMapper;
+import com.example.liquibase.service.DTO.mapper.UserParticipationMapper;
 import com.example.liquibase.service.interfaces.ParticipationInterface;
 import com.example.liquibase.web.exception.participation.ParticipationException;
 import com.example.liquibase.web.vm.ParticipationVM;
@@ -27,12 +29,14 @@ public class ParticipationService implements ParticipationInterface {
     private final ParticipationMapper participationMapper;
     private final CompetitionService competitionService;
     private final UserService userService;
+    private final UserParticipationMapper userParticipationMapper;
 
-    public ParticipationService(ParticipationRepository participationRepository, ParticipationMapper participationMapper, CompetitionService competitionService, UserService userService) {
+    public ParticipationService(ParticipationRepository participationRepository, ParticipationMapper participationMapper, CompetitionService competitionService, UserService userService, UserParticipationMapper userParticipationMapper) {
         this.participationRepository = participationRepository;
         this.participationMapper = participationMapper;
         this.competitionService = competitionService;
         this.userService = userService;
+        this.userParticipationMapper = userParticipationMapper;
     }
 
     @Override
@@ -114,7 +118,7 @@ public class ParticipationService implements ParticipationInterface {
     }
 
     @Override
-    public List<ParticipationDTO> findByUserId(UUID id) {
+    /*public List<ParticipationDTO> findByUserId(UUID id) {
         Optional<User> user = userService.getUserById(id);
         if (user.isEmpty()) {
             throw new ParticipationException("User with ID: " + id + " does not exist");
@@ -129,10 +133,23 @@ public class ParticipationService implements ParticipationInterface {
         return participations.stream()
                 .map(participationMapper::toParticipationDTO)
                 .collect(Collectors.toList());
-    }
-    /*public List<ParticipationDTO> findByUserId(UUID id) {
-        return participationRepository.findByUserId(id).stream().map(participationMapper::toParticipationDTO).collect(Collectors.toList());
     }*/
+
+    public List<UserParticipationDTO> findByUserId(UUID id) {
+        Optional<User> user = userService.getUserById(id);
+        if (user.isEmpty()) {
+            throw new ParticipationException("User with ID: " + id + " does not exist");
+        }
+
+        List<Participation> participations = participationRepository.findByUserId(id);
+        if (participations.isEmpty()) {
+            throw new ParticipationException("No participations found for user with ID: " + id);
+        }
+
+        return participations.stream()
+                .map(userParticipationMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
     public Optional<Participation> existingParticipation(UUID user_id, UUID competition_id) {
         return participationRepository.findParticipationByUserIdAndCompetitionId(user_id, competition_id);

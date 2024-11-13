@@ -1,6 +1,7 @@
 package com.example.liquibase.web.api.competition;
 
 import com.example.liquibase.domain.Competition;
+import com.example.liquibase.domain.enums.SpeciesType;
 import com.example.liquibase.service.DTO.CompetitionDTO;
 import com.example.liquibase.service.DTO.mapper.CompetitionMapper;
 import com.example.liquibase.service.implementations.CompetitionService;
@@ -9,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -48,5 +51,24 @@ public class CompetitionController {
         Competition updatedCompetition = competitionService.update(competition);
         return ResponseEntity.ok(updatedCompetition);
     }
+
+//    @GetMapping("/search")
+//    public List<Competition> searchCompetitions(
+//            @RequestParam(required = false) String code,
+//            @RequestParam(required = false) String location,
+//            @RequestParam(required = false) LocalDateTime dateFrom,
+//            @RequestParam(required = false) SpeciesType speciesType,
+//            @RequestParam(required = false) Boolean openRegistration
+//    ) {
+//        return competitionService.searchCompetitions(
+//                CompetitionService.CompetitionSearchRequest.builder()
+//                        .code(code)
+//                        .location(location)
+//                        .dateFrom(dateFrom)
+//                        .speciesType(speciesType)
+//                        .openRegistration(openRegistration)
+//                        .build()
+//        );
+//    }
 }
 
