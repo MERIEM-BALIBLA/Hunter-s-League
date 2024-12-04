@@ -21,17 +21,8 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
 
     List<Competition> findByDateBetween(LocalDateTime sevenDaysAgo, LocalDateTime currentDate);
 
-//    @Query("SELECT c FROM Competition c WHERE " +
-//            "(:code is null OR c.code LIKE %:code%) AND " +
-//            "(:location is null OR c.location LIKE %:location%) AND " +
-//            "(:dateFrom is null OR c.date >= :dateFrom) AND " +
-//            "(:speciesType is null OR c.speciesType = :speciesType) AND " +
-//            "(:openRegistration is null OR c.openRegistration = :openRegistration)")
-//    List<Competition> findByCriteria(
-//            @Param("code") String code,
-//            @Param("location") String location,
-//            @Param("dateFrom") LocalDateTime dateFrom,
-//            @Param("speciesType") SpeciesType speciesType,
-//            @Param("openRegistration") Boolean openRegistration
-//    );
+    List<Competition> findByOpenRegistrationTrueAndDateBetween(LocalDateTime start, LocalDateTime end);
+
+    List<Competition> findByDateAfter(LocalDateTime date);
+
 }

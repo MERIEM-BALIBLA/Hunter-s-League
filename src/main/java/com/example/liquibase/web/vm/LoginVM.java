@@ -11,8 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 public class LoginVM {
     @NotNull(message = "null value")
-    @NotBlank(message = "Username is required.")
-    private String username;
+    @NotBlank(message = "email is required.")
+    private String email;
 
     @NotNull
     @Size(min = 3)

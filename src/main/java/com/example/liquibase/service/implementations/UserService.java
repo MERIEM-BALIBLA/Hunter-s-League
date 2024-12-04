@@ -4,6 +4,7 @@ import com.example.liquibase.domain.User;
 import com.example.liquibase.repository.UserRepository;
 import com.example.liquibase.service.DTO.UserDTO;
 import com.example.liquibase.service.interfaces.UserInterface;
+
 import com.example.liquibase.web.exception.user.UserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -22,6 +23,7 @@ public class UserService implements UserInterface {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public List<UserDTO> getExpiredUsers() {
         LocalDateTime now = LocalDateTime.now();
         List<User> expiredUsers = userRepository.findByLicenseExpirationDateAfter(now);
@@ -35,18 +37,21 @@ public class UserService implements UserInterface {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public Optional<User> getUserByName(String username) {
         return this.userRepository.getUserByUsername(username);
     }
 
+    @Override
     public Page<User> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAllByOrderByJoinDateDesc(pageable);
     }
 
+
     @Override
     public User createUser(User user) {
-        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));  // Remove asterisks
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
         Optional<User> userOptional = this.getUserByName(user.getUsername());
         if (userOptional.isPresent()) {
             throw new UserException("User already exists");
@@ -59,13 +64,13 @@ public class UserService implements UserInterface {
         if (user == null) {
             throw new UserException("User is null");
         }
-        Optional<User> userOptional = this.getUserByName(user.getUsername());
+        Optional<User> userOptional = this.searchUserByEmail(user.getEmail());
         if (userOptional.isEmpty()) {
-            throw new UserException("Username or password is incorrect");
+            throw new UserException("Email or password is incorrect");
         }
         User foundUser = userOptional.get();
         if (!BCrypt.checkpw(user.getPassword(), foundUser.getPassword())) {
-            throw new UserException("Username or password is incorrect");
+            throw new UserException("Email or password is incorrect");
         }
         return userOptional;
     }
@@ -84,6 +89,7 @@ public class UserService implements UserInterface {
         return userRepository.getUserById(id);
     }
 
+    @Override
     public User updateUser(UUID userId, User updatedUser) {
         Optional<User> userOptional = getUserById(userId);
         if (userOptional.isPresent()) {
@@ -105,6 +111,16 @@ public class UserService implements UserInterface {
         }
     }
 
+    @Override
+    public Optional<User> searchUserByEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new UserException("Email cannot be empty");
+        }
+//        return userRepository.findByEmail(email.trim());
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public List<User> searchUsersByUsername(String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             throw new UserException("Search term cannot be empty");
@@ -112,22 +128,18 @@ public class UserService implements UserInterface {
         return userRepository.findByUsernameContainingIgnoreCase(searchTerm.trim());
     }
 
-    public List<User> searchUserByEmail(String email) {
-        if (email == null || email.trim().isEmpty()) {
-            throw new UserException("Email cannot be empty");
-        }
-        return userRepository.findByEmail(email.trim());
-    }
-
-    List<User> findByLastName(String lastName) {
+    @Override
+    public List<User> findByLastName(String lastName) {
         return userRepository.findByLastName(lastName);
     }
 
-    List<User> findByFirstName(String firstName) {
+    @Override
+    public List<User> findByFirstName(String firstName) {
         return userRepository.findByFirstName(firstName);
     }
 
-    List<User> findByCin(String cin) {
+    @Override
+    public List<User> findByCin(String cin) {
         return userRepository.findByCin(cin);
     }
 

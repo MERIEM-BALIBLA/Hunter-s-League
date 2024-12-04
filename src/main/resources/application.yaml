@@ -14,7 +14,11 @@ spring:
 
   liquibase:
     change-log: db/changelog/master.yaml
+  #  security:
+  #    user:
+  #      name: meriem
+  #      password: meriem
 
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  #  autoconfigure:
+  #    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
 

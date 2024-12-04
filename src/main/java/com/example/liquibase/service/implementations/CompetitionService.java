@@ -1,10 +1,10 @@
 package com.example.liquibase.service.implementations;
 
 import com.example.liquibase.domain.Competition;
-import com.example.liquibase.domain.enums.SpeciesType;
 import com.example.liquibase.repository.CompetitionRepository;
 import com.example.liquibase.service.interfaces.CompetitionInterface;
 import com.example.liquibase.web.exception.Competition.CompetitionException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,34 +14,43 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-
+@Slf4j
 public class CompetitionService implements CompetitionInterface {
 
     @Autowired
     private CompetitionRepository competitionRepository;
 
-    public List<Competition> getAll() {
-        return competitionRepository.findAll();
-    }
+//    @Scheduled(cron = "*/1 * * * * *")  // Runs every hour
+//    public void checkCompetitionsForRegistration() {
+//        log.info("Checking competitions for registration update...");
+//        List<Competition> competitions = competitionRepository.findAll();
+//        LocalDateTime currentDate = LocalDateTime.now();
+//
+//        for (Competition competition : competitions) {
+//            LocalDateTime competitionDate = competition.getDate();
+//
+//            // Check if competition is within 24 hours from now
+//            if (competitionDate.isAfter(currentDate) && competitionDate.isBefore(currentDate.plusHours(24))) {
+//                // If the competition registration is open, close it
+//                if (competition.getOpenRegistration()) {
+//                    competition.setOpenRegistration(false);
+//                    competitionRepository.save(competition);
+//                    log.info("Updated openRegistration for competition: " + competition.getCode());
+//                }
+//            }
+//        }
+//    }
 
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void checkAndCloseRegistration() {
-        getAll().forEach(competition -> {
-            LocalDateTime competitionDate = competition.getDate();
-            long daysUntilCompetition = ChronoUnit.DAYS.between(LocalDateTime.now(), competitionDate);
 
-            if (daysUntilCompetition <= 3 && competition.getOpenRegistration()) {
-                competition.setOpenRegistration(false);
-                update(competition);
-            }
-        });
-    }
+
+//    public List<Competition> getAll() {
+//        return competitionRepository.findAll();
+//    }
 
     @Override
     public Optional<Competition> getByCode(String code) {
@@ -80,20 +89,6 @@ public class CompetitionService implements CompetitionInterface {
         // Save the new competition
         return competitionRepository.save(competition);
     }
-    /*public Competition save(Competition competition) {
-        if (competition.getLocation() != null && competition.getDate() != null && competition.getCode() == null) {
-            String code = generateCodeFromLocationAndDate(competition.getLocation(), competition.getDate());
-            competition.setCode(code);
-        }
-
-        Optional<Competition> competitionOptional = getByCode(competition.getCode());
-        if (competitionOptional.isPresent()) {
-            throw new CompetitionException("This competition with this code already exists");
-        }
-
-        // Save the new competition
-        return competitionRepository.save(validation(competition));
-    }*/
 
     private String generateCodeFromLocationAndDate(String location, LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
@@ -149,11 +144,8 @@ public class CompetitionService implements CompetitionInterface {
         return competition;
     }
 
-    public Optional<Competition> findByLocation(String location) {
-        return competitionRepository.findByLocation(location);
-    }
-
-//    public List<Competition> searchCompetitions(String code, String location, LocalDateTime dateFrom, SpeciesType speciesType, Boolean openRegistration) {
-//        return competitionRepository.findByCriteria();
+//    public Optional<Competition> findByLocation(String location) {
+//        return competitionRepository.findByLocation(location);
 //    }
+
 }

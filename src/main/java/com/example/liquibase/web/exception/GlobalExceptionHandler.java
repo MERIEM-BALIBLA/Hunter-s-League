@@ -53,3 +53,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
+
+    /*@ExceptionHandler(CompetitionException.class)
+    public String exception(CompetitionException ex) {
+        return ex.getMessage();
+    }*/

@@ -7,4 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface RegisterVmMapper {
     User toUser(RegisterVM signUpVm);
+
+    RegisterVM toVM(User user);
 }

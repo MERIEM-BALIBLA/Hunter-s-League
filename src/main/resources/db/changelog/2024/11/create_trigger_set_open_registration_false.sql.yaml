@@ -1,0 +1,13 @@
+#databaseChangeLog:
+#  - changeSet:
+#      id: 1
+#      author: your_username
+#      changes:
+#        - sql:
+#            dbms: mysql  # specify the dbms you are using, e.g., mysql, postgresql, etc.
+#            splitStatements: false  # To execute as a single statement, without splitting
+#            sql: |
+#              -- Update openRegistration to false for competitions created within 24 hours of the current time
+#              UPDATE competitions
+#              SET openRegistration = FALSE
+#              WHERE TIMESTAMPDIFF(HOUR, NOW(), date) <= 24;
