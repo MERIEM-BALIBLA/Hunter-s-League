@@ -1,17 +1,15 @@
 package com.example.liquibase.web.api.competition;
 
 import com.example.liquibase.domain.Competition;
-import com.example.liquibase.domain.enums.SpeciesType;
 import com.example.liquibase.service.DTO.CompetitionDTO;
 import com.example.liquibase.service.DTO.mapper.CompetitionMapper;
 import com.example.liquibase.service.implementations.CompetitionService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,18 +32,21 @@ public class CompetitionController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('CREATE_COMPETITION')")
     public ResponseEntity<Competition> createCompetition(@RequestBody @Valid Competition competition) {
         Competition createdCompetition = competitionService.save(competition);
         return ResponseEntity.ok(createdCompetition);
     }
 
     @DeleteMapping("/{competitionId}")
+    @PreAuthorize("hasAuthority('DELETE_COMPETITION')")
     public ResponseEntity<String> deleteCompetition(@PathVariable("competitionId") UUID competitionId) {
         competitionService.delete(competitionId);
         return ResponseEntity.ok("Competition has been deleted succesfully");
     }
 
     @PutMapping("/{competitionId}")
+    @PreAuthorize("hasAuthority('UPDATE_COMPETITION')")
     public ResponseEntity<Competition> updateCompetition(@PathVariable("competitionId") UUID competitionId, @RequestBody Competition competition) {
         competition.setId(competitionId);
         Competition updatedCompetition = competitionService.update(competition);

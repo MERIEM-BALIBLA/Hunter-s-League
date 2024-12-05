@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,6 +25,7 @@ public class HuntController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('GET_HUNT')")
     public ResponseEntity<Page<HuntDTO>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -42,6 +44,7 @@ public class HuntController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAuthority('CREATE_HUNT')")
     public Hunt create(@RequestBody @Valid HuntVM hunt){
         return huntInterface.save(hunt);
     }
