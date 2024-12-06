@@ -15,58 +15,41 @@ import static com.example.liquibase.permission.Permission.*;
 public enum Role {
     ADMIN(
             Set.of(
-                    GET_USERS,
-                    CREATE_USERS,
-                    UPDATE_USERS,
-                    DELETE_USERS,
+                    MANAGE_USER,
 
-                    GET_COMPETITION,
-                    CREATE_COMPETITION,
-                    UPDATE_COMPETITION,
-                    DELETE_COMPETITION,
+                    MANAGE_COMPETITION,
 
-                    GET_SPECIES,
-                    CREATE_SPECIES,
-                    UPDATE_SPECIES,
-                    DELETE_SPECIES,
+                    MANAGE_SPECIES,
 
-                    GET_PARTICIPATION,
-                    CREATE_PARTICIPATION,
-                    UPDATE_PARTICIPATION,
-                    DELETE_PARTICIPATION,
+                    MANAGE_PARTICIPATION,
 
-                    GET_HUNT,
+                    MANAGE_HUNT,
 
-                    GET_TOPTHREE
+                    CAN_VIEW_RANKINGS
             )
     ),
     MEMBER(
             Set.of(
-                    GET_COMPETITION,
-                    GET_SPECIES,
+                    CAN_VIEW_COMPETITIONS,
+                    CAN_VIEW_SPECIES,
                     GET_PARTICIPATION_USER,
-                    GET_TOPTHREE,
+                    CAN_VIEW_RANKINGS,
 
-                    CREATE_PARTICIPATION,
-                    UPDATE_PARTICIPATION,
-                    DELETE_PARTICIPATION
+                    MANAGE_PARTICIPATION
             )
     ),
+
     JURY(
             Set.of(
-                    GET_HUNT,
-                    GET_COMPETITION,
-                    GET_SPECIES,
-                    GET_TOPTHREE,
-
-                    GET_PARTICIPATION,
-                    CREATE_PARTICIPATION,
-
-                    CREATE_HUNT,
-                    UPDATE_HUNT,
-                    DELETE_HUNT
+                    CAN_VIEW_COMPETITIONS,
+                    CAN_VIEW_SPECIES,
+                    GET_PARTICIPATION_USER,
+                    CAN_VIEW_RANKINGS,
+                    MANAGE_PARTICIPATION,
+                    MANAGE_HUNT
             )
     );
+
 
     @Getter
     private final Set<Permission> permissions;

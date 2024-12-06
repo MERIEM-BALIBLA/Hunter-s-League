@@ -1,37 +1,24 @@
 package com.example.liquibase.permission;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum Permission {
-    GET_USERS("users:read"),
-    CREATE_USERS("users:create"),
-    UPDATE_USERS("users:update"),
-    DELETE_USERS("users:delete"),
 
-    GET_COMPETITION("competition:read"),
-    CREATE_COMPETITION("competition:create"),
-    UPDATE_COMPETITION("competition:update"),
-    DELETE_COMPETITION("competition:delete"),
+    MANAGE_USER("user: management"),
 
-    GET_SPECIES("species:read"),
-    CREATE_SPECIES("species:create"),
-    UPDATE_SPECIES("species:update"),
-    DELETE_SPECIES("species:delete"),
+    MANAGE_COMPETITION("competition: management"),
+    CAN_VIEW_COMPETITIONS("competition:CAN VIEW COMPETITIONS"),
 
-    GET_PARTICIPATION("participation:read"),
-    CREATE_PARTICIPATION("participation:create"),
-    UPDATE_PARTICIPATION("participation:update"),
-    DELETE_PARTICIPATION("participation:delete"),
+    MANAGE_SPECIES("species: management"),
+    CAN_VIEW_SPECIES("species:read"),
 
-    GET_HUNT("hunt:read"),
-    CREATE_HUNT("hunt:create"),
-    UPDATE_HUNT("hunt:update"),
-    DELETE_HUNT("hunt:delete"),
-    GET_PARTICIPATION_USER("participation:userParticipation"),
-    GET_TOPTHREE("participation:getThree");
+    MANAGE_PARTICIPATION("participation: management"),
+    GET_PARTICIPATION_USER("participation: participation of user auth"),
+
+    MANAGE_HUNT("hunt: hunt CRUD"),
+    CAN_VIEW_RANKINGS("les trois premier:read");
 
     @Getter
     private final String permission;

@@ -42,7 +42,8 @@ public class JwtService {
                 .add(claims)
                 .subject(username)  //subject -> username
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+//                .expiration(new Date(System.currentTimeMillis() + 60 * 60 * 30))
+                .expiration(new Date(System.currentTimeMillis() + 86400000))
                 .and()
                 .signWith(getKey())
                 .compact();

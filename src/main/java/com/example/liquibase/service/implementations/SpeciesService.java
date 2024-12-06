@@ -56,7 +56,7 @@ public class SpeciesService {
 
             return speciesRepository.save(existingSpecies);
         } else {
-            throw new RuntimeException("Species not found");
+            throw new SpeciesException("Species not found");
         }
     }
 

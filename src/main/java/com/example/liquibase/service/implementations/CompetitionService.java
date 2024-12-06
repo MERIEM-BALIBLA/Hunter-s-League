@@ -118,7 +118,7 @@ public class CompetitionService implements CompetitionInterface {
             return competitionRepository.save(existingCompetition);
 
         } else {
-            throw new RuntimeException("Competition not found");
+            throw new CompetitionException("Competition not found");
         }
     }
 

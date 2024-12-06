@@ -28,7 +28,7 @@ public class ParticipationController {
     private ParticipationMapper participationMapper;
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('GET_PARTICIPATION')")
+    @PreAuthorize("hasAuthority('MANAGE_PARTICIPATION') and hasAnyRole('ADMIN', 'JURY')")
     public ResponseEntity<Page<ParticipationDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Participation> userPage = participationService.findAll(page, size);
         Page<ParticipationDTO> userDTOPage = userPage.map(participationMapper::toParticipationDTO);
@@ -36,20 +36,17 @@ public class ParticipationController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('CREATE_PARTICIPATION')")
     public Participation saveParticipation(@RequestBody @Valid ParticipationVM participationVM) {
         return participationInterface.save(participationVM);
     }
 
     @PutMapping("/update")
-    @PreAuthorize("hasAuthority('UPDATE_PARTICIPATION')")
     public ResponseEntity<Participation> update(@RequestBody @Valid Participation participation) {
         Participation updateParticipation = participationService.update(participation);
         return ResponseEntity.ok(updateParticipation);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('DELETE_PARTICIPATION')")
     public ResponseEntity<String> delete(@PathVariable("id") UUID id) {
         participationService.delete(id);
         return ResponseEntity.ok("Participation has been deleted succesfully");
@@ -62,7 +59,6 @@ public class ParticipationController {
     }
 
     @GetMapping("/podium")
-    @PreAuthorize("hasAuthority('GET_TOPTHREE')")
     public ResponseEntity<List<ParticipationDTO>> topThree() {
         return ResponseEntity.ok(participationInterface.getTop3Participants());
     }

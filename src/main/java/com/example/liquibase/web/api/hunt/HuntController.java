@@ -25,7 +25,7 @@ public class HuntController {
     }
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('GET_HUNT')")
+    @PreAuthorize("hasAuthority('MANAGE_HUNT')")
     public ResponseEntity<Page<HuntDTO>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -44,7 +44,7 @@ public class HuntController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('CREATE_HUNT')")
+    @PreAuthorize("hasAuthority('MANAGE_HUNT')")
     public Hunt create(@RequestBody @Valid HuntVM hunt){
         return huntInterface.save(hunt);
     }

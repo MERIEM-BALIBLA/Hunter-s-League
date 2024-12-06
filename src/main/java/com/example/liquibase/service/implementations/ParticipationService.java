@@ -3,6 +3,7 @@ package com.example.liquibase.service.implementations;
 import com.example.liquibase.domain.Competition;
 import com.example.liquibase.domain.Participation;
 import com.example.liquibase.domain.User;
+import com.example.liquibase.domain.enums.Role;
 import com.example.liquibase.repository.ParticipationRepository;
 import com.example.liquibase.service.DTO.ParticipationDTO;
 import com.example.liquibase.service.DTO.UserParticipationDTO;
@@ -10,10 +11,14 @@ import com.example.liquibase.service.DTO.mapper.ParticipationMapper;
 import com.example.liquibase.service.DTO.mapper.UserParticipationMapper;
 import com.example.liquibase.service.interfaces.ParticipationInterface;
 import com.example.liquibase.web.exception.participation.ParticipationException;
+import com.example.liquibase.web.exception.user.UserException;
 import com.example.liquibase.web.vm.ParticipationVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,6 +59,7 @@ public class ParticipationService implements ParticipationInterface {
         Optional<User> user = userService.getUserByName(participationVM.getUserName());
         Optional<Competition> competition = competitionService.getByCode(participationVM.getCompetitionCode());
 
+
         if (user.isPresent() && competition.isPresent()) {
             Optional<Participation> participationExists = existingParticipation(user.get().getId(), competition.get().getId());
 
@@ -74,9 +80,10 @@ public class ParticipationService implements ParticipationInterface {
                 throw new ParticipationException("User's licence is expired");
             }
 
-            // Map the ParticipationVM to Participation
             Participation participation = participationMapper.toParticipation(participationVM);
-            // Set the user and competition associations
+
+            validateParticipation(participationVM.getUserName());
+
             participation.setUser(user.get());
             participation.setCompetition(competition.get());
             participation.setScore(0.);
@@ -95,6 +102,7 @@ public class ParticipationService implements ParticipationInterface {
     @Override
     public Participation update(Participation participation) {
         Optional<Participation> optionalParticipation = findById(participation.getId());
+        validateParticipation(participation.getUser().getUsername());
         if (optionalParticipation.isPresent()) {
             Participation existingParticipation = optionalParticipation.get();
             existingParticipation.setCompetition(participation.getCompetition());
@@ -111,30 +119,49 @@ public class ParticipationService implements ParticipationInterface {
     public void delete(UUID id) {
         Optional<Participation> optionalParticipation = findById(id);
         if (optionalParticipation.isPresent()) {
+            isAuthenticatedUserId(optionalParticipation.get().getUser().getId());
             participationRepository.delete(optionalParticipation.get());
         } else {
             throw new RuntimeException("Participation not found");
         }
     }
 
+    //    Verify roles and authentication
+    private void validateParticipation(String userName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("Not authenticated.");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof User userDetails) {
+            Role userRole = userDetails.getRole();
+            UUID authenticatedUserId = userDetails.getId();
+
+            if (userRole.equals(Role.MEMBER) || userRole.equals(Role.JURY)) {
+                Optional<User> targetUser = userService.getUserByName(userName);
+                if (targetUser.isEmpty() || !targetUser.get().getId().equals(authenticatedUserId)) {
+                    throw new AccessDeniedException("You can only create participation for yourself.");
+                }
+            }
+        }
+    }
+
+
+    public boolean isAuthenticatedUserId(UUID id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof User userDetails) {
+                UUID authenticatedUserId = userDetails.getId();
+                return id.equals(authenticatedUserId);
+            }
+        }
+        return false;
+    }
+
     @Override
-    /*public List<ParticipationDTO> findByUserId(UUID id) {
-        Optional<User> user = userService.getUserById(id);
-        if (user.isEmpty()) {
-            throw new ParticipationException("User with ID: " + id + " does not exist");
-        }
-
-        List<Participation> participations = participationRepository.findByUserId(id);
-
-        if (participations.isEmpty()) {
-            throw new ParticipationException("No participations found for user with ID: " + id);
-        }
-
-        return participations.stream()
-                .map(participationMapper::toParticipationDTO)
-                .collect(Collectors.toList());
-    }*/
-
     public List<UserParticipationDTO> findByUserId(UUID id) {
         Optional<User> user = userService.getUserById(id);
         if (user.isEmpty()) {
@@ -144,6 +171,11 @@ public class ParticipationService implements ParticipationInterface {
         List<Participation> participations = participationRepository.findByUserId(id);
         if (participations.isEmpty()) {
             throw new ParticipationException("No participations found for user with ID: " + id);
+        }
+
+
+        if (!isAuthenticatedUserId(id)) {
+            throw new UserException("you can only see yours participations");
         }
 
         return participations.stream()

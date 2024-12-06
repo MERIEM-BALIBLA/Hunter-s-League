@@ -96,7 +96,6 @@ public class UserService implements UserInterface {
             User existingUser = userOptional.get();
 
             existingUser.setPassword(BCrypt.hashpw(existingUser.getPassword(), BCrypt.gensalt()));  // Remove asterisks
-            // Mettez à jour les champs nécessaires avec les valeurs de updatedUser
             existingUser.setUsername(updatedUser.getUsername());
             existingUser.setFirstName(updatedUser.getFirstName());
             existingUser.setLastName(updatedUser.getLastName());
@@ -107,7 +106,7 @@ public class UserService implements UserInterface {
             return userRepository.save(existingUser);
 
         } else {
-            throw new RuntimeException("User not found");
+            throw new UserException("User not found");
         }
     }
 

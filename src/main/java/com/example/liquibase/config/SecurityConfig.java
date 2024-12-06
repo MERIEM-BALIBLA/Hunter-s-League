@@ -40,7 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("api/users/**").hasRole("ADMIN")
 
                         .requestMatchers("api/competitions/**").hasAnyRole("ADMIN", "MEMBER")
-                        .requestMatchers("api/species/**").hasAnyRole("ADMIN", "MEMBER")
+                        .requestMatchers("api/species/**").permitAll()
 
                         .requestMatchers("api/hunt/**").permitAll()
 

@@ -18,21 +18,21 @@ public class SpeciesController {
     private SpeciesService speciesService;
 
     @GetMapping("/list")
-    @PreAuthorize("hasAuthority('GET_COMPETITION')")
+    @PreAuthorize("hasAuthority('MANAGE_SPECIES') or hasAuthority('CAN_VIEW_SPECIES')")
     public ResponseEntity<Page<Species>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Species> speciesPage = speciesService.getAll(page, size);
         return ResponseEntity.ok(speciesPage);
     }
 
     @PostMapping("/addSpecies")
-    @PreAuthorize("hasAuthority('CREATE_SPECIES')")
+    @PreAuthorize("hasAuthority('MANAGE_SPECIES') and hasRole('ADMIN')")
     public ResponseEntity<Species> addSpecies(@RequestBody @Valid Species species) {
         Species createdSpecies = speciesService.createSpecie(species);
         return ResponseEntity.ok(createdSpecies);
     }
 
     @PutMapping("/{speciesId}")
-    @PreAuthorize("hasAuthority('UPDATE_SPECIES')")
+    @PreAuthorize("hasAuthority('MANAGE_SPECIES')")
     public ResponseEntity<Species> updateSpecies(@PathVariable("speciesId") UUID speciesId, @RequestBody Species species) {
         species.setId(speciesId);
         Species updatedSpecies = speciesService.updateSpecies(species);
@@ -40,7 +40,7 @@ public class SpeciesController {
     }
 
     @DeleteMapping("/{speciesId}")
-    @PreAuthorize("hasAuthority('DELETE_SPECIES')")
+    @PreAuthorize("hasAuthority('MANAGE_SPECIES')")
     public ResponseEntity<String> deleteSpecies(@PathVariable("speciesId") UUID speciesId) {
         speciesService.deleteSpecies(speciesId);
         return ResponseEntity.ok("Species has been deleted succesfully");

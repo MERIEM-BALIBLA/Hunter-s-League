@@ -25,6 +25,7 @@ public class CompetitionController {
     }
 
     @GetMapping("/list")
+    @PreAuthorize("hasAuthority('CAN_VIEW_COMPETITIONS') or hasAuthority('MANAGE_COMPETITION')")
     public ResponseEntity<Page<CompetitionDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Competition> competitionPage = competitionService.getAll(page, size);
         Page<CompetitionDTO> competitionDTOPage = competitionPage.map((competitionMapper::toCompetitionDTO));
@@ -32,21 +33,21 @@ public class CompetitionController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAuthority('CREATE_COMPETITION')")
+    @PreAuthorize("hasAuthority('MANAGE_COMPETITION')")
     public ResponseEntity<Competition> createCompetition(@RequestBody @Valid Competition competition) {
         Competition createdCompetition = competitionService.save(competition);
         return ResponseEntity.ok(createdCompetition);
     }
 
     @DeleteMapping("/{competitionId}")
-    @PreAuthorize("hasAuthority('DELETE_COMPETITION')")
+    @PreAuthorize("hasAuthority('MANAGE_COMPETITION')")
     public ResponseEntity<String> deleteCompetition(@PathVariable("competitionId") UUID competitionId) {
         competitionService.delete(competitionId);
         return ResponseEntity.ok("Competition has been deleted succesfully");
     }
 
     @PutMapping("/{competitionId}")
-    @PreAuthorize("hasAuthority('UPDATE_COMPETITION')")
+    @PreAuthorize("hasAuthority('MANAGE_COMPETITION')")
     public ResponseEntity<Competition> updateCompetition(@PathVariable("competitionId") UUID competitionId, @RequestBody Competition competition) {
         competition.setId(competitionId);
         Competition updatedCompetition = competitionService.update(competition);
