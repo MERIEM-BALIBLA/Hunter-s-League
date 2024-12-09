@@ -2,16 +2,14 @@ package com.example.liquibase.web.api;
 
 import com.example.liquibase.domain.User;
 import com.example.liquibase.service.AuthenticationService;
-import com.example.liquibase.service.DTO.UserDTO;
 import com.example.liquibase.web.vm.LoginVM;
 import com.example.liquibase.web.vm.RegisterVM;
 import com.example.liquibase.web.vm.mapper.LoginVmMapper;
 import com.example.liquibase.web.vm.mapper.RegisterVmMapper;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,11 +25,14 @@ public class AuthenticationController {
     @Autowired
     private LoginVmMapper loginMapper;
 
-//    @GetMapping("/")
-//    public ResponseEntity<String> welcome(HttpServletRequest request) {
-//        return ResponseEntity.ok("Welcome back " + request.getSession().getId());
-//    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        // Call the logout method in AuthenticationService
+        String logoutMessage = service.logout();
 
+        // Return a response to the client
+        return ResponseEntity.ok(logoutMessage);
+    }
     @PostMapping("/register")
     public ResponseEntity<RegisterVM> register(@RequestBody RegisterVM userVm) {
         User user = registerMapper.toUser(userVm);
