@@ -14,11 +14,13 @@ spring:
 
   liquibase:
     change-log: db/changelog/master.yaml
-  #  security:
-  #    user:
-  #      name: meriem
-  #      password: meriem
 
-  #  autoconfigure:
-  #    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+server:
+  port: 8443
+  ssl:
+    key-alias: baeldung
+    key-store: classpath:keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    key-password: changeit
 
